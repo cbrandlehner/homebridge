@@ -80,7 +80,7 @@ export class PluginManager {
   }
 
   public static isQualifiedPluginIdentifier(identifier: string): boolean {
-    return PluginManager.PLUGIN_IDENTIFIER_PATTERN.test(identifier);
+    return PluginManager.PLUGIN_IDENTIFIER_PATTERN.test(identifier.replace(path.sep, "/"));
   }
 
   public static extractPluginName(name: string): PluginName { // extract plugin name without @scope/ prefix
@@ -285,6 +285,7 @@ export class PluginManager {
 
             const absolutePath = path.join(searchPath, scopeDirectory);
             fs.readdirSync(absolutePath)
+              .filter(name => PluginManager.isQualifiedPluginIdentifier(name))
               .filter(name => fs.statSync(path.resolve(absolutePath, name)).isDirectory())
               .forEach(name => relativePluginPaths.push(path.join(scopeDirectory, name)));
           });
